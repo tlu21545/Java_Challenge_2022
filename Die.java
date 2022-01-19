@@ -16,16 +16,21 @@ public class Die {
     }
 
     // Returns # of sides of die
+    // let's change method signature to "public int getNumSides()" since it is a getter method that returns something
     int numSides() {
         return sides;
     }
 
     // Returns random die roll
+    // add public scope for this method so can call from outside this class if we wanted
+    // (always declare a method as either private or public)
+    // also let's rename to "getRoll" since it returns something
     int roll() {
         return (int)(Math.random() * sides + 1);
     }
 
     // Rolls die n times and averages rolls
+    // add public scope like above and rename to "getAverageRolls"
     double averageRolls(int rolls) {
         int tempSum = 0;
         for (int i = 0; i < rolls; i++) {
@@ -35,6 +40,7 @@ public class Die {
     }
 
     // Returns number of each value in n rolls
+    // add public and rename to "getValuesList"
     String valuesList(int rolls) {
         int[] valuesList = new int[this.sides];
         for (int i = 0; i < rolls; i++) {
