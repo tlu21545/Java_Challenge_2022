@@ -1,67 +1,131 @@
-// Question Two
-
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Die {
-    int sides;
+    
+    // Represents probability of rolling a certain number
+    // [1, 2, 3, 4, 5, 6] is a standard 6 sided die
+    // [1, 1, 2, 3, 4, 5, 6] is a 6 sided die that is twice as likely to roll 1
+    ArrayList<Integer> dieWeights = new ArrayList<Integer>();
 
-    // Creates 6 sided die
+    // Stores last number rolled, -1 by default
+    int lastRoll = -1;
+    
+    // Constructs standard 6 sided die
     public Die() {
-        sides = 6;
+        for (int i = 0; i < 6; i++) {
+            dieWeights.add(i + 1);
+        }
     }
 
-    // Creates n sided die
+    // Constructs standard n sided die
     public Die(int sides) {
-        this.sides = sides;
-    }
-
-    // Returns # of sides of die
-    int numSides() {
-        return sides;
-    }
-
-    // Returns random die roll
-    int roll() {
-        return (int)(Math.random() * sides + 1);
-    }
-
-    // Rolls die n times and averages rolls
-    double averageRolls(int rolls) {
-        int tempSum = 0;
-        for (int i = 0; i < rolls; i++) {
-            tempSum += roll();
+        for (int i = 0; i < sides; i++) {
+            dieWeights.add(i + 1);
         }
-        return (double) tempSum / rolls;
     }
 
-    // Returns number of each value in n rolls
-    String valuesList(int rolls) {
-        int[] valuesList = new int[this.sides];
-        for (int i = 0; i < rolls; i++) {
-            valuesList[roll() - 1]++;
+    // Constructs weighted n sided die
+    public Die(Integer... nums) {
+        for (int num : nums) {
+            dieWeights.add(num);
         }
-        return Arrays.toString(valuesList);
+    }
+
+    // Returns number of sides
+    public int getSides() {
+        int numSides = 0;
+        for (int dieWeight : dieWeights) {
+            if (dieWeight > numSides) {
+                numSides = dieWeight;
+            }
+        }
+        return numSides;
+    }
+
+    // Returns roll
+    public int getRoll() {
+        lastRoll = dieWeights.get((int) (Math.random() * dieWeights.size()));
+        return lastRoll;
+    }
+
+    // Returns n rolls
+    public String getRoll(int numRolls) {
+        int[] tempList = new int[numRolls];
+        for (int i = 0; i < numRolls; i++) {
+            lastRoll = dieWeights.get((int) (Math.random() * dieWeights.size()));
+            tempList[i] = lastRoll;
+        }
+        
+        return Arrays.toString(tempList);
+    }
+
+    // Returns last number rolled
+    public int getLastRoll() {
+        return lastRoll;
+    }
+
+    // Returns frequency of each value in n rolls
+    public String getFrequency(int numRolls) {
+        int[] frequencyList = new int[getSides()];
+        for (int i = 0; i < numRolls; i++) {
+            lastRoll = getRoll();
+            frequencyList[lastRoll - 1]++;
+        }
+        return Arrays.toString(frequencyList);
+    }
+
+    // Returns sum of n rolls
+    public int getSum(int numRolls) {
+        int sum = 0;
+        for (int i = 0; i < numRolls; i++) {
+            lastRoll = getRoll();
+            sum += lastRoll;
+        }
+        return sum;
+    }
+
+    // Returns average of n rolls
+    public double getAverage(int numRolls) {
+        int sum = 0;
+        for (int i = 0; i < numRolls; i++) {
+            lastRoll = getRoll();
+            sum += lastRoll;
+        }
+        return (double) sum / numRolls;
     }
 
     public static void main(String[] args) {
-        // Create standard die, four sided die, and nine sided die
-        Die standard = new Die();
-        Die fourSides = new Die(4);
-        Die nineSides = new Die(9);
+        Die six = new Die();
+        Die four = new Die(4);
+        Die sevenWeight = new Die(1, 1, 2, 3, 4, 4, 4, 5, 6, 7);
 
-        // Print sides and random roll for all three dice
-        System.out.println("Sides: " + standard.numSides() + " Roll: " + standard.roll());
-        System.out.println("Sides: " + fourSides.numSides() + " Roll: " + fourSides.roll());
-        System.out.println("Sides: " + nineSides.numSides() + " Roll: " + nineSides.roll());
+        System.out.println("Sides: " + six.getSides());
+        System.out.println("Sides: " + four.getSides());
+        System.out.println("Sides: " + sevenWeight.getSides());
 
-        // Prints average of 1000 rolls for all three dice
-        System.out.println("Standard die average of 1000 roles: " + standard.averageRolls(1000));
-        System.out.println("Four sided die average of 1000 roles: " + fourSides.averageRolls(1000));
-        System.out.println("Nine sided die average of 1000 roles: " + nineSides.averageRolls(1000));
-        
-        // Prints number of each value in 10000 rolls for all three dice
-        System.out.println("Number of each value in 10000 rolls on standard die: " + standard.valuesList(10000));
-        System.out.println("Number of each value in 10000 rolls on four sided die: " + fourSides.valuesList(10000));
-        System.out.println("Number of each value in 10000 rolls on nine sided die: " + nineSides.valuesList(10000));
+        System.out.println("Roll: " + six.getRoll());
+        System.out.println("Roll: " + four.getRoll());
+        System.out.println("Roll: " + sevenWeight.getRoll());
+
+        System.out.println("20 rolls: " + six.getRoll(20));
+        System.out.println("20 rolls: " + four.getRoll(20));
+        System.out.println("20 rolls: " + sevenWeight.getRoll(20));
+
+        System.out.println("Last roll: " + six.getLastRoll());
+        System.out.println("Last roll: " + four.getLastRoll());
+        System.out.println("Last roll: " + sevenWeight.getLastRoll());
+
+        System.out.println("Frequency in 100000 rolls: " + six.getFrequency(100000));
+        System.out.println("Frequency in 100000 rolls: " + four.getFrequency(100000));
+        System.out.println("Frequency in 100000 rolls: " + sevenWeight.getFrequency(100000));
+
+        System.out.println("Sum of 100000 rolls: " + six.getSum(100000));
+        System.out.println("Sum of 100000 rolls: " + four.getSum(100000));
+        System.out.println("Sum of 100000 rolls: " + sevenWeight.getSum(100000));
+
+        System.out.println("Average of 100000 rolls: " + six.getAverage(100000));
+        System.out.println("Average of 100000 rolls: " + four.getAverage(100000));
+        System.out.println("Average of 100000 rolls: " + sevenWeight.getAverage(100000));
     }
 }
